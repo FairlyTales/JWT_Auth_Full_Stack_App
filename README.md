@@ -1,2 +1,3 @@
-# JWT_Authentication
+# JWT Authentication
+
 Full stack app with JWT authentication
