@@ -5,7 +5,6 @@ require('dotenv').config();
 const usersDB = { users: require('../model/users.json') }
 
 const handleLogin = async (req, res) => {
-	console.log(req.body);
 	const { login, password } = req.body;
 
 	if (!login || !password) {
@@ -19,13 +18,25 @@ const handleLogin = async (req, res) => {
 	}
 
 	if (password === foundUser.password) {
-		const accessToken = jwt.sign({ 'username': foundUser.username }, process.env.ACCESS_TOKEN_SECRET, {
-			expiresIn: '30s',
-		});
+		const accessToken = jwt.sign(
+			{
+				'username': foundUser.username
+			},
+			process.env.ACCESS_TOKEN_SECRET,
+			{
+				expiresIn: '30s',
+			}
+		);
 
-		const refreshToken = jwt.sign({ 'username': foundUser.username }, process.env.REFRESH_TOKEN_SECRET, {
-			expiresIn: '1d',
-		});
+		const refreshToken = jwt.sign(
+			{
+				'username': foundUser.username
+			},
+			process.env.REFRESH_TOKEN_SECRET,
+			{
+				expiresIn: '1d',
+			}
+		);
 
 		// we are not using a real database, so we need to update the user in json file
 		const otherUsers = usersDB.users.filter(user => user.username !== foundUser.username);
