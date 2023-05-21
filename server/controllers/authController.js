@@ -1,6 +1,8 @@
-const usersDB = {
-	users: require('../model/users.json'),
-}
+const jwt = require('jsonwebtoken');
+const fsPromises = require('fs').promises;
+const path = require('path');
+require('dotenv').config();
+const usersDB = { users: require('../model/users.json') }
 
 const handleLogin = async (req, res) => {
 	console.log(req.body);
@@ -12,15 +14,40 @@ const handleLogin = async (req, res) => {
 
 	const foundUser = usersDB.users.find(user => user.username === login);
 
-	console.log(foundUser)
-
-
 	if (!foundUser) {
 		return res.status(401).json({ 'message': 'This user does not exist' });
 	}
 
 	if (password === foundUser.password) {
-		res.json({ 'success': `User ${ login } is logged in!` });
+		const accessToken = jwt.sign({ 'username': foundUser.username }, process.env.ACCESS_TOKEN_SECRET, {
+			expiresIn: '30s',
+		});
+
+		const refreshToken = jwt.sign({ 'username': foundUser.username }, process.env.REFRESH_TOKEN_SECRET, {
+			expiresIn: '1d',
+		});
+
+		// we are not using a real database, so we need to update the user in json file
+		const otherUsers = usersDB.users.filter(user => user.username !== foundUser.username);
+		const updatedUser = { ...foundUser, refreshToken };
+		console.log(updatedUser)
+
+		usersDB.users = [ ...otherUsers, updatedUser ];
+
+		await fsPromises.writeFile(
+			path.join(__dirname, '..', 'model', 'users.json'),
+			JSON.stringify(usersDB.users)
+		);
+
+		res.cookie('refreshToken', refreshToken, {
+			httpOnly: true,
+			// one day
+			maxAge: 1000 * 60 * 60 * 24,
+		});
+
+		res.json({
+			'accessToken': accessToken,
+		});
 	} else {
 		res.status(401).json({ 'message': 'Incorrect password' });
 	}
