@@ -9,8 +9,6 @@ const handleRefresh = (req, res) => {
 		return res.sendStatus(401);
 	}
 
-	console.log(cookies);
-
 	const refreshToken = cookies.refreshToken;
 
 	const foundUser = usersDB.users.find(user => user.refreshToken === refreshToken);

@@ -41,7 +41,6 @@ const handleLogin = async (req, res) => {
 		// we are not using a real database, so we need to update the user in json file
 		const otherUsers = usersDB.users.filter(user => user.username !== foundUser.username);
 		const updatedUser = { ...foundUser, refreshToken };
-		console.log(updatedUser)
 
 		usersDB.users = [ ...otherUsers, updatedUser ];
 

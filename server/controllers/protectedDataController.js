@@ -8,5 +8,5 @@ const getProtectedData = (req, res) => {
 
 
 module.exports = {
-	getUsers: getProtectedData,
+	getProtectedData,
 }

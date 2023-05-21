@@ -4,6 +4,6 @@ const protectedDataController = require('../controllers/protectedDataController'
 const verifyJWT = require('../middleware/verifyJWT');
 
 router.route('/')
-	.get(verifyJWT, protectedDataController.getUsers);
+	.get(verifyJWT, protectedDataController.getProtectedData);
 
 module.exports = router;
