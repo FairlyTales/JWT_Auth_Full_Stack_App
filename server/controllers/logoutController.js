@@ -33,6 +33,7 @@ const handleLogout = async (req, res) => {
 	res.clearCookie('jwt', {
 		httpOnly: true,
 		sameSite: 'None',
+		secure: true,
 	});
 
 	res.status(204).json({ message: 'Logged out' });
