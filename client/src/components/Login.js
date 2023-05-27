@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import useAuth from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import axios from '../api/axios';
+import { api } from '../api/axios';
 
 const Login = () => {
 	const { setAuth } = useAuth();
@@ -26,7 +26,7 @@ const Login = () => {
 		try {
 			e.preventDefault();
 
-			const response = await axios.post('/auth',
+			const response = await api.post('/auth',
 				JSON.stringify({ login, password }),
 				{
 					headers: { 'Content-Type': 'application/json' },
@@ -35,7 +35,7 @@ const Login = () => {
 			);
 
 			const accessToken = response?.data?.accessToken;
-			axios.defaults.headers.common['Authorization'] = `Bearer ${ accessToken }`;
+			api.defaults.headers.common['Authorization'] = `Bearer ${ accessToken }`;
 
 			setAuth({ user: login, pwd: password, accessToken });
 			setLogin('');

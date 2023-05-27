@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import AuthContext from "../context/AuthProvider";
-import axios from "../api/axios";
+import { api } from "../api/axios";
 
 const Home = () => {
 	const { auth, setAuth } = useContext(AuthContext);
@@ -13,21 +13,21 @@ const Home = () => {
 
 	const handleGetData = async () => {
 		try {
-			const data = await axios.get('/protected');
+			const data = await api.get('/protected');
 
 			console.log(data);
-			console.log(axios.defaults.headers.common['Authorization']);
+			console.log(api.defaults.headers.common['Authorization']);
 
 			setDataReceived(true);
 		} catch (e) {
 			console.log(e.response);
 
 			if (e.response.status === 403) {
-				const response = await axios.get('/refresh');
+				const response = await api.get('/refresh');
 
 				console.log(response);
 
-				axios.defaults.headers.common['Authorization'] = `Bearer ${ response.data.accessToken }`;
+				api.defaults.headers.common['Authorization'] = `Bearer ${ response.data.accessToken }`;
 
 				await handleGetData();
 			} else {
@@ -39,7 +39,7 @@ const Home = () => {
 
 	const logout = async () => {
 		setAuth({});
-		axios.defaults.headers.common['Authorization'] = '';
+		api.defaults.headers.common['Authorization'] = '';
 		navigate('/login');
 	}
 
