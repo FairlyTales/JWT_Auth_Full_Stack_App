@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import useAuth from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-
 import axios from '../api/axios';
 
 const Login = () => {
@@ -36,9 +35,9 @@ const Login = () => {
 			);
 
 			const accessToken = response?.data?.accessToken;
-			const roles = response?.data?.roles;
+			axios.defaults.headers.common['Authorization'] = `Bearer ${ accessToken }`;
 
-			setAuth({ user: login, pwd: password, roles, accessToken });
+			setAuth({ user: login, pwd: password, accessToken });
 			setLogin('');
 			setPassword('');
 			navigate('/home');
@@ -48,12 +47,18 @@ const Login = () => {
 		}
 	}
 
+	const handleGoToHome = () => {
+		navigate('/home');
+	}
+
 	return (
 		<section>
 			<p
 				ref={ errRef }
-				className={ errorMessage ? "errmsg" : "offscreen" }
-				aria-live="assertive">{ errorMessage }
+				className={ errorMessage ? "errorMessage" : "offscreen" }
+				aria-live="assertive"
+			>
+				{ errorMessage }
 			</p>
 
 			<h1>Sign In</h1>
@@ -80,7 +85,10 @@ const Login = () => {
 				/>
 
 				<button>Sign In</button>
+
 			</form>
+
+			<button onClick={ handleGoToHome }>Go to home page without logging</button>
 		</section>
 	)
 }
