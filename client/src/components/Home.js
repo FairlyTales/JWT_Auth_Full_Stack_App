@@ -4,36 +4,19 @@ import AuthContext from "../context/AuthProvider";
 import { api } from "../api/axios";
 
 const Home = () => {
-	const { auth, setAuth } = useContext(AuthContext);
+	const { setAuth } = useContext(AuthContext);
 	const navigate = useNavigate();
 	const [ dataReceived, setDataReceived ] = useState(false);
 	const [ errorMessage, setErrorMessage ] = useState('');
 
-	console.log(auth);
-
 	const handleGetData = async () => {
 		try {
-			const data = await api.get('/protected');
-
-			console.log(data);
-			console.log(api.defaults.headers.common['Authorization']);
+			await api.get('/protected');
 
 			setDataReceived(true);
 		} catch (e) {
-			console.log(e.response);
-
-			if (e.response.status === 403) {
-				const response = await api.get('/refresh');
-
-				console.log(response);
-
-				api.defaults.headers.common['Authorization'] = `Bearer ${ response.data.accessToken }`;
-
-				await handleGetData();
-			} else {
-				setDataReceived(false);
-				setErrorMessage(e.response.statusText);
-			}
+			setDataReceived(false);
+			setErrorMessage(e?.response?.statusText);
 		}
 	}
 
